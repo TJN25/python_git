@@ -4,8 +4,7 @@ from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 import getopt
 import os
-# args = '-c -f -p -q -h'.split()
-# optlist, args = getopt.getopt(args, 'c:f:p:qh')
+
 
 
 help = '''
@@ -60,46 +59,29 @@ help = '''
 def usage():
     print help
 
-def main():
-    input_name = ""
-    fasta_name = ""
-    file_path = "."
+def rungetopts():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "a:c:f:p:qh", ["accession", "calls", "fasta", "filepath", "quiet", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "a:qh", ["accession", "quiet", "help"])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(err) # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
-
+    accession = ""
     for o, a in opts:
             if o in ("-h", "--help"):
                 usage()
                 sys.exit()
-            elif o in ("-c", "--calls"):
-                input_name = a
             elif o in ("-a", "--accession"):
                 accession = a
-            elif o in ("-f", "--fasta"):
-                fasta_name = a
-            elif o in ("-p", "--filepath"):
-                file_path = a
             else:
                 assert False, "unhandled option"
+    if accession == "":
+        print "-a <accession> missing. For more help use -h"
+        sys.exit(2)
+    return(accession)
 
-    try:
-        inFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/%s_new_calls.txt" % accession, 'r')
-    except IOError:
-        print "/Users/thomasnicholson/phd/RNASeq/new_calls/%s_new_calls.txt not found" % accession
-        sys.exit(2)
-    try:
-        fastaFile = list(SeqIO.parse("/Users/thomasnicholson/phd/RNASeq/sequences/%s.fna" % accession, "fasta"))
-    except IOError:
-        print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.fna not found" % accession
-        sys.exit(2)
-        
-    my_seq = fastaFile[0].seq
-    write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s/" % accession
+def makeoutputdirectory(write_path):
     if os.path.isdir(write_path) == False:
         try:
             os.mkdir(write_path)
@@ -117,7 +99,8 @@ def main():
             print "Exiting script"
             sys.exit(2)
 
-
+def concatenateSequence(fastaFile):
+    my_seq = fastaFile[0].seq
     i = 0
     for seq in fastaFile:
         if i == 0:
@@ -125,12 +108,14 @@ def main():
             continue
         i += 1
         my_seq = my_seq + seq.seq
+    return my_seq
+
+def writeSequences(inFile,my_seq,accession,write_path):
     i = 0
     for line in inFile:
         i += 1
         words = line.rstrip()
         words = words.split("\t")
-        id = words[0]
         srna = words[-1]
         start = words[2]
         try:
@@ -152,8 +137,35 @@ def main():
             srnaSeqRev = srnaSeq.reverse_complement()
             if strand == "-":
                 srnaSeq = srnaSeqRev
-            srnaFile = open("%s/%s.fna" % (write_path, srna), "a")
-            srnaFile.write(">%s[%s-%s,%s,%s,%s,%s]\n%s\n" %(srna,start, end, strand, srna_type, feature, overlap, srnaSeq))
+            if srna_type == "known":
+                srnaPCFile = open("%s/positive_control/%s.fna" % (write_path, accession), "a")
+                srnaPCFile.write(">%s[%s-%s,%s,%s,%s,%s]\n%s\n" % (srna, start, end, strand, srna_type, feature, overlap, srnaSeq))
+            else:
+                srnaPredictedFile = open("%s/predicted/%s.fna" % (write_path, accession), "a")
+                srnaPredictedFile.write(">%s[%s-%s,%s,%s,%s,%s]\n%s\n" % (srna, start, end, strand, srna_type, feature, overlap, srnaSeq))
+def main():
+
+    accession = rungetopts()
+
+    try:
+        inFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/%s_new_calls.txt" % accession, 'r')
+    except IOError:
+        print "/Users/thomasnicholson/phd/RNASeq/new_calls/%s_new_calls.txt not found" % accession
+        sys.exit(2)
+    try:
+        fastaFile = list(SeqIO.parse("/Users/thomasnicholson/phd/RNASeq/sequences/%s.fna" % accession, "fasta"))
+    except IOError:
+        print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.fna not found" % accession
+        sys.exit(2)
+
+
+    write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1"
+
+    print "Combining contigs"
+    my_seq = concatenateSequence(fastaFile)
+
+    print "Writing sequences"
+    writeSequences(inFile,my_seq,accession,write_path)
 
 
 if __name__ == "__main__":
