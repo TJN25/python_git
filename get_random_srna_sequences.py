@@ -195,6 +195,7 @@ def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
 
     srnaLengths = []
     srnaStrands = []
+    srnaIDs = []
     i = 0
     for line in inFile:
         i += 1
@@ -212,12 +213,13 @@ def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
         srnaLengths.append(srna_length)
         strand = words[4]
         srnaStrands.append(strand)
+        srnaIDs.append(srna)
     for i in range(0,len(shuffledIndexes)):
         index = shuffledIndexes[i]
         length = srnaLengths[i]
         strand = srnaStrands[i]
         seqIndex = seqIndexes[i]
-
+        srna = srnaIDs[i]
         if strand == "+":
             start = index
             end = start + length
