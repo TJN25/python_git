@@ -63,7 +63,7 @@ def usage():
 
 def rungetopts():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "f:qh", ["file", "quiet", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "i:f:qh", ["infile", "folder", "quiet", "help"])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(err) # will print something like "option -a not recognized"
@@ -74,71 +74,40 @@ def rungetopts():
             if o in ("-h", "--help"):
                 usage()
                 sys.exit()
-            elif o in ("-f", "--file"):
+            elif o in ("-i", "--infile"):
                 file = a
+            elif o in ("-f", "--folder"):
+                folder = a
             else:
                 assert False, "unhandled option"
     if file == "":
         print "-f <file> missing. For more help use -h"
         sys.exit(2)
-    return(file)
+    return(file, folder)
 
-def unique_stk(inFile):
-    new = False
-    writeFile = True
-    list = []
-    for line in inFile:
+def single_fasta(fastaFile, folder):
+    for seq in fastaFile:
+        id = seq.id
+        outname = id.split("[")
+        outname = outname[0]
+        my_seq = seq.seq
+        outFile = open("/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s/%s.fna" % (folder, outname), "w")
+        outFile.write(">%s\n%s\n" % (id, my_seq))
 
-        words = line.rstrip()
-        if words == "# STOCKHOLM 1.0":
-            new = True
-            writeFile = True
-            try:
-                outFile.close()
-            except UnboundLocalError:
-                pass
-            continue
-        if new == True and "#=GS" in line:
-            names = words.split(" ")
-            id = names[-1]
-            id = id.split("[")
-            id = id[0]
-            subsetID = names[1]
-            if "|" in subsetID:
-                subsetID = subsetID.split("|")
-                subsetID = subsetID[1]
-            if subsetID in list:
-                writeFile = False
-                continue
-            list.append(subsetID)
-            print id
-            print subsetID
-            if writeFile == False:
-                continue
-            outFile = open("/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/stockholm/%s.stk" % id, 'a')
-            outFile.write("# STOCKHOLM 1.0\n\n%s\n" % words)
-            new = False
-        else:
-            try:
-                outFile.write("%s\n" % words)
-            except UnboundLocalError:
-                pass
-            except ValueError:
-                pass
 
 
 def main():
 
-    filename = rungetopts()
+    filename, folder = rungetopts()
+    print filename, folder
     print "Reading files"
     try:
-        inFile = open("/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s" % filename, 'r')
-
+        fastaFile = list(SeqIO.parse("/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s" % filename, "fasta"))
     except IOError:
         print "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s not found" % filename
         sys.exit(2)
 
-    unique_stk(inFile)
+    single_fasta(fastaFile, folder)
 
 
 if __name__ == "__main__":
