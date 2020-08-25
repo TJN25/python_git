@@ -1,4 +1,10 @@
 #!/usr/bin/python
+
+'''
+file paths are hard coded
+'''
+
+
 import sys
 from Bio import SeqIO
 import getopt
@@ -67,7 +73,7 @@ def file_len(fname):
             pass
     return i
 
-def intergenicSequence(accession, my_seq):
+def intergenicSequence(accession, my_seq, shuffled):
     start = 0
     end = 0
     random_seq = Seq("AG", generic_dna)
@@ -81,9 +87,11 @@ def intergenicSequence(accession, my_seq):
                     location = feature.location
                     end = location.start
                     intergeneicSeq = my_seq[start:end]
-
-                    shuffledSeq = ''.join(random.sample(str(intergeneicSeq), len(intergeneicSeq)))
-                    random_seq = random_seq + shuffledSeq
+                    if shuffled == True:
+                        shuffledSeq = ''.join(random.sample(str(intergeneicSeq), len(intergeneicSeq)))
+                        random_seq = random_seq + shuffledSeq
+                    else:
+                        random_seq = random_seq + intergeneicSeq
                     start = location.end
                     #print len(random_seq)
                 except KeyError:
@@ -135,25 +143,28 @@ def intergenicPositions(accession):
 
 def rungetopts():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "a:qh", ["accession", "quiet", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "a:sqh", ["accession", "shuffle", "quiet", "help"])
     except getopt.GetoptError as err:
         # print help information and exit:
         print(err) # will print something like "option -a not recognized"
         usage()
         sys.exit(2)
     accession = ""
+    shuffled = False
     for o, a in opts:
             if o in ("-h", "--help"):
                 usage()
                 sys.exit()
             elif o in ("-a", "--accession"):
                 accession = a
+            elif o in ("-s", "--shuffle"):
+                shuffled = True
             else:
                 assert False, "unhandled option"
     if accession == "":
         print "-a <accession> missing. For more help use -h"
         sys.exit(2)
-    return(accession)
+    return(accession, shuffled)
 
 def makeoutputdirectory(write_path):
     if os.path.isdir(write_path) == False:
@@ -186,7 +197,7 @@ def concatenateSequence(fastaFile):
 
 def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
 
-    randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_new_calls.txt" % accession, "w")
+    randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_no_shuffle_new_calls.txt" % accession, "w")
     randomFile.write("start\tend\tstrand\tsequence\n")
 
     shuffledIndexes = random.sample(positions, fileLength)
@@ -247,18 +258,18 @@ def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
         if seqStart > seqLength:
             continue
         sequence  = random_seq[seqStart:seqEnd]
-        randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_new_calls.txt" % accession, "a")
+        randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_no_shuffle_new_calls.txt" % accession, "a")
         randomFile.write("%s\t%s\t%s\t%s\n" % (start, end, strand, sequence))
 
         srna_type = "random"
 
-        write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/negative_control"
+        write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/negative_control_no_shuffle"
         srnaFile = open("%s/%s.fna" % (write_path, accession), "a")
         srnaFile.write(">%s[%s-%s,%s,%s]\n%s\n" % (srna, seqStart, seqEnd, strand, srna_type, sequence))
 
 def main():
 
-    accession = rungetopts()
+    accession, shuffled = rungetopts()
     print "Reading files"
     try:
         inFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/%s_new_calls.txt" % accession, 'r')
@@ -279,7 +290,7 @@ def main():
 
 
     print "Getting intergenic sequence"
-    random_seq = intergenicSequence(accession, my_seq)
+    random_seq = intergenicSequence(accession, my_seq, shuffled)
 
 
     print "Getting intergenic positions"

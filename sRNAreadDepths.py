@@ -75,9 +75,9 @@ def rungetopts():
             elif o in ("-n", "--nhmmer"):
                 nhmmer = a
             elif o in ("-r", "--readdepths"):
-                readdepths = True
+                readdepths = a
             elif o in ("-o", "--output"):
-                output = True
+                output = a
             else:
                 assert False, "unhandled option"
     if nhmmer == "":
@@ -103,10 +103,24 @@ def openNHMMER(nhmmername):
 def openReadDepths(readdepthsname, d):
     readdepthsDF = pd.read_csv(readdepthsname, sep = "\t", comment='#')
     readdepthsDF = readdepthsDF[readdepthsDF['ID'] != "ID"]
-    readdepthsDF[["mean_value", "mean_decimal"]] = readdepthsDF.max_mean.str.split(".", expand = True)
-    readdepthsDF[["median_value", "median_decimal"]] = readdepthsDF.max_median.str.split(".", expand = True)
-    readdepthsDF[["max_value", "max_decimal"]] = readdepthsDF.max_max.str.split(".", expand = True)
+
+    ##when being done in jupyter the columns were all read in as string and the lines below were necessary...
+    ##it seems to work fine now
+
+    # print(readdepthsDF.dtypes)
+    # readdepthsDF[["mean_value", "mean_decimal"]] = readdepthsDF.max_mean.str.split(".", expand = True)
+    # print(1)
+    # readdepthsDF[["median_value", "median_decimal"]] = readdepthsDF.max_median.str.split(".", expand = True)
+    # readdepthsDF[["max_value", "max_decimal"]] = readdepthsDF.max_max.str.split(".", expand = True)
+    # readdepthsDF[['mean_value', 'median_value', 'max_value']] = readdepthsDF.loc[:,['mean_value', 'median_value', 'max_value']].apply(pd.to_numeric)
+
+
+    readdepthsDF["mean_value"] = readdepthsDF['max_mean']
+    readdepthsDF["median_value"] = readdepthsDF['max_median']
+    readdepthsDF["max_value"] = readdepthsDF['max_max']
     readdepthsDF[['mean_value', 'median_value', 'max_value']] = readdepthsDF.loc[:,['mean_value', 'median_value', 'max_value']].apply(pd.to_numeric)
+
+
     idList = list(d.keys())
     readdepthsKept = readdepthsDF[readdepthsDF['ID'].isin(idList)]
     return(readdepthsKept)
