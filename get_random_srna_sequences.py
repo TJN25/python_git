@@ -13,6 +13,7 @@ from BCBio import GFF
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 import random
+import comparativeSRNA as srna
 
 
 help = '''
@@ -67,80 +68,6 @@ help = '''
 def usage():
     print help
 
-def file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
-            pass
-    return i
-
-def intergenicSequence(accession, my_seq, shuffled):
-    start = 0
-    end = 0
-    random_seq = Seq("AG", generic_dna)
-    try:
-
-        in_handle = open("/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff" % accession)
-        for rec in GFF.parse(in_handle):
-            for feature in rec.features:
-                qualifiers = feature.qualifiers
-                try:
-                    location = feature.location
-                    end = location.start
-                    intergeneicSeq = my_seq[start:end]
-                    if shuffled == True:
-                        shuffledSeq = ''.join(random.sample(str(intergeneicSeq), len(intergeneicSeq)))
-                        random_seq = random_seq + shuffledSeq
-                    else:
-                        random_seq = random_seq + intergeneicSeq
-                    start = location.end
-                    #print len(random_seq)
-                except KeyError:
-                    pass
-
-        in_handle.close()
-
-    except IOError:
-        print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession
-        sys.exit(2)
-    return random_seq
-
-
-def intergenicPositions(accession):
-    start = 0
-    end = 0
-    positions = [0]
-    try:
-
-        in_handle = open("/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff" % accession)
-        for rec in GFF.parse(in_handle):
-            i = 0
-            for feature in rec.features:
-                qualifiers = feature.qualifiers
-                try:
-                    qualifiers['gene_biotype']
-                except KeyError:
-                    continue
-                try:
-                    i += 1
-                    location = feature.location
-                    end = location.start - 49
-                    if end < start:
-                        continue
-                    tmpPos = range(start,end)
-                    positions = positions + tmpPos
-                    start = location.end + 50
-                except KeyError:
-                    pass
-
-        in_handle.close()
-
-    except IOError:
-        print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession
-        sys.exit(2)
-    return positions
-
-
-
 def rungetopts():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "a:sqh", ["accession", "shuffle", "quiet", "help"])
@@ -166,106 +93,183 @@ def rungetopts():
         sys.exit(2)
     return(accession, shuffled)
 
-def makeoutputdirectory(write_path):
-    if os.path.isdir(write_path) == False:
-        try:
-            os.mkdir(write_path)
-        except OSError:
-            print ("Creation of the directory %s failed" % accession)
-            sys.exit(2)
-    directory = os.listdir(write_path)
-    if len(directory) != 0:
-        print "Examples of files in %s" % write_path
-        print directory[0:4]
-        query_user = raw_input("%s is not an empty directory. Continue anyway y/n (this may write over existing files): " % write_path)
-        if query_user == "y":
-            print "Using %s as directory" % write_path
-        else:
-            print "Exiting script"
-            sys.exit(2)
 
-def concatenateSequence(fastaFile):
-    my_seq = fastaFile[0].seq
-    i = 0
-    for seq in fastaFile:
-        if i == 0:
-            i += 1
-            continue
-        i += 1
-        my_seq = my_seq + seq.seq
-    return my_seq
 
-def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
+# def file_len(fname):
+#     with open(fname) as f:
+#         for i, l in enumerate(f):
+#             pass
+#     return i
+#
+# def intergenicSequence(accession, my_seq, shuffled):
+#     start = 0
+#     end = 0
+#     random_seq = Seq("AG", generic_dna)
+#     try:
+#
+#         in_handle = open("/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff" % accession)
+#         for rec in GFF.parse(in_handle):
+#             for feature in rec.features:
+#                 qualifiers = feature.qualifiers
+#                 try:
+#                     location = feature.location
+#                     end = location.start
+#                     intergeneicSeq = my_seq[start:end]
+#                     if shuffled == True:
+#                         shuffledSeq = ''.join(random.sample(str(intergeneicSeq), len(intergeneicSeq)))
+#                         random_seq = random_seq + shuffledSeq
+#                     else:
+#                         random_seq = random_seq + intergeneicSeq
+#                     start = location.end
+#                     #print len(random_seq)
+#                 except KeyError:
+#                     pass
+#
+#         in_handle.close()
+#
+#     except IOError:
+#         print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession
+#         sys.exit(2)
+#     return random_seq
+#
+#
+# def intergenicPositions(accession):
+#     start = 0
+#     end = 0
+#     positions = [0]
+#     try:
+#
+#         in_handle = open("/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff" % accession)
+#         for rec in GFF.parse(in_handle):
+#             i = 0
+#             for feature in rec.features:
+#                 qualifiers = feature.qualifiers
+#                 try:
+#                     qualifiers['gene_biotype']
+#                 except KeyError:
+#                     continue
+#                 try:
+#                     i += 1
+#                     location = feature.location
+#                     end = location.start - 49
+#                     if end < start:
+#                         continue
+#                     tmpPos = range(start,end)
+#                     positions = positions + tmpPos
+#                     start = location.end + 50
+#                 except KeyError:
+#                     pass
+#
+#         in_handle.close()
+#
+#     except IOError:
+#         print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession
+#         sys.exit(2)
+#     return positions
+#
+#
+#
 
-    randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_no_shuffle_new_calls.txt" % accession, "w")
-    randomFile.write("start\tend\tstrand\tsequence\n")
-
-    shuffledIndexes = random.sample(positions, fileLength)
-    seqLength = len(random_seq)
-    seqIndexes = random.sample(range(0,seqLength), fileLength)
-
-    srnaLengths = []
-    srnaStrands = []
-    srnaIDs = []
-    i = 0
-    for line in inFile:
-        i += 1
-        words = line.rstrip()
-        words = words.split("\t")
-        start = words[2]
-        try:
-            start = int(start)
-        except ValueError:
-            continue
-        end = words[3]
-        end = int(end)
-        srna = words[-1]
-        srna_length = end - start
-        srnaLengths.append(srna_length)
-        strand = words[4]
-        srnaStrands.append(strand)
-        srnaIDs.append(srna)
-    for i in range(0,len(shuffledIndexes)):
-        index = shuffledIndexes[i]
-        length = srnaLengths[i]
-        strand = srnaStrands[i]
-        seqIndex = seqIndexes[i]
-        srna = srnaIDs[i]
-        if strand == "+":
-            start = index
-            end = start + length
-            seqStart = seqIndex
-            seqEnd  = seqStart + length
-        else:
-            end = index
-            start = end - length
-            seqEnd = seqIndex
-            seqStart  = seqEnd - length
-        if start < 1:
-            continue
-        if end < 1:
-            continue
-        if length < 50:
-            continue
-        if length > 500:
-            continue
-        if seqStart < 1:
-            continue
-        if seqEnd < 1:
-            continue
-        if seqEnd > seqLength:
-            continue
-        if seqStart > seqLength:
-            continue
-        sequence  = random_seq[seqStart:seqEnd]
-        randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_no_shuffle_new_calls.txt" % accession, "a")
-        randomFile.write("%s\t%s\t%s\t%s\n" % (start, end, strand, sequence))
-
-        srna_type = "random"
-
-        write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/negative_control_no_shuffle"
-        srnaFile = open("%s/%s.fna" % (write_path, accession), "a")
-        srnaFile.write(">%s[%s-%s,%s,%s]\n%s\n" % (srna, seqStart, seqEnd, strand, srna_type, sequence))
+# def makeoutputdirectory(write_path):
+#     if os.path.isdir(write_path) == False:
+#         try:
+#             os.mkdir(write_path)
+#         except OSError:
+#             print ("Creation of the directory %s failed" % accession)
+#             sys.exit(2)
+#     directory = os.listdir(write_path)
+#     if len(directory) != 0:
+#         print "Examples of files in %s" % write_path
+#         print directory[0:4]
+#         query_user = raw_input("%s is not an empty directory. Continue anyway y/n (this may write over existing files): " % write_path)
+#         if query_user == "y":
+#             print "Using %s as directory" % write_path
+#         else:
+#             print "Exiting script"
+#             sys.exit(2)
+#
+# def concatenateSequence(fastaFile):
+#     my_seq = fastaFile[0].seq
+#     i = 0
+#     for seq in fastaFile:
+#         if i == 0:
+#             i += 1
+#             continue
+#         i += 1
+#         my_seq = my_seq + seq.seq
+#     return my_seq
+#
+# def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
+#
+#     randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_no_shuffle_new_calls.txt" % accession, "w")
+#     randomFile.write("start\tend\tstrand\tsequence\n")
+#
+#     shuffledIndexes = random.sample(positions, fileLength)
+#     seqLength = len(random_seq)
+#     seqIndexes = random.sample(range(0,seqLength), fileLength)
+#
+#     srnaLengths = []
+#     srnaStrands = []
+#     srnaIDs = []
+#     i = 0
+#     for line in inFile:
+#         i += 1
+#         words = line.rstrip()
+#         words = words.split("\t")
+#         start = words[2]
+#         try:
+#             start = int(start)
+#         except ValueError:
+#             continue
+#         end = words[3]
+#         end = int(end)
+#         srna = words[-1]
+#         srna_length = end - start
+#         srnaLengths.append(srna_length)
+#         strand = words[4]
+#         srnaStrands.append(strand)
+#         srnaIDs.append(srna)
+#     for i in range(0,len(shuffledIndexes)):
+#         index = shuffledIndexes[i]
+#         length = srnaLengths[i]
+#         strand = srnaStrands[i]
+#         seqIndex = seqIndexes[i]
+#         srna = srnaIDs[i]
+#         if strand == "+":
+#             start = index
+#             end = start + length
+#             seqStart = seqIndex
+#             seqEnd  = seqStart + length
+#         else:
+#             end = index
+#             start = end - length
+#             seqEnd = seqIndex
+#             seqStart  = seqEnd - length
+#         if start < 1:
+#             continue
+#         if end < 1:
+#             continue
+#         if length < 50:
+#             continue
+#         if length > 500:
+#             continue
+#         if seqStart < 1:
+#             continue
+#         if seqEnd < 1:
+#             continue
+#         if seqEnd > seqLength:
+#             continue
+#         if seqStart > seqLength:
+#             continue
+#         sequence  = random_seq[seqStart:seqEnd]
+#         randomFile = open("/Users/thomasnicholson/phd/RNASeq/new_calls/random/python_version_1/%s_random_no_shuffle_new_calls.txt" % accession, "a")
+#         randomFile.write("%s\t%s\t%s\t%s\n" % (start, end, strand, sequence))
+#
+#         srna_type = "random"
+#
+#         write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/negative_control_no_shuffle"
+#         srnaFile = open("%s/%s.fna" % (write_path, accession), "a")
+#         srnaFile.write(">%s[%s-%s,%s,%s]\n%s\n" % (srna, seqStart, seqEnd, strand, srna_type, sequence))
 
 def main():
 
@@ -285,19 +289,19 @@ def main():
         sys.exit(2)
 
     print "Combining contigs"
-    my_seq = concatenateSequence(fastaFile)
+    my_seq = srna.concatenateSequence(fastaFile)
 
 
 
     print "Getting intergenic sequence"
-    random_seq = intergenicSequence(accession, my_seq, shuffled)
+    random_seq = srna.intergenicSequence(accession, my_seq, shuffled)
 
 
     print "Getting intergenic positions"
-    positions = intergenicPositions(accession)
+    positions = srna.intergenicPositions(accession)
 
     print "Selecting random sRNAs"
-    selectRandomLocation(inFile, positions,fileLength, random_seq, accession)
+    srna.selectRandomLocation(inFile, positions,fileLength, random_seq, accession)
 
 
 

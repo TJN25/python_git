@@ -1,3 +1,11 @@
+from Bio.Alphabet import generic_dna
+import random
+from Bio import SeqIO
+from BCBio import GFF
+from Bio.Seq import Seq
+from Bio.Alphabet import generic_dna
+import random
+import pandas as pd
 
 
 def file_len(fname):
@@ -92,6 +100,8 @@ def makeoutputdirectory(write_path):
         else:
             print "Exiting script"
             sys.exit(2)
+
+
 
 def concatenateSequence(fastaFile):
     my_seq = fastaFile[0].seq
@@ -371,3 +381,42 @@ def writeReadDepths(outname, readDepths, d):
         values))
     outFile.close()
 
+def helloworld():
+    print("hello world")
+
+
+
+
+def writeSequences(inFile,my_seq,accession,write_path):
+    i = 0
+    for line in inFile:
+        i += 1
+        words = line.rstrip()
+        words = words.split("\t")
+        srna = words[-1]
+        start = words[2]
+        try:
+            start = int(start)
+        except ValueError:
+            continue
+        end = words[3]
+        end = int(end)
+        if end - start > 50:
+            strand = words[4]
+            new_feature = words[8]
+            feature = words[1]
+            overlap = words[7]
+            if new_feature == "FALSE":
+                srna_type = "known"
+            else:
+                srna_type = "novel"
+            srnaSeq = my_seq[start:end]
+            srnaSeqRev = srnaSeq.reverse_complement()
+            if strand == "-":
+                srnaSeq = srnaSeqRev
+            if srna_type == "known":
+                srnaPCFile = open("%s/positive_control/%s.fna" % (write_path, accession), "a")
+                srnaPCFile.write(">%s[%s-%s,%s,%s,%s,%s]\n%s\n" % (srna, start, end, strand, srna_type, feature, overlap, srnaSeq))
+            else:
+                srnaPredictedFile = open("%s/predicted/%s.fna" % (write_path, accession), "a")
+                srnaPredictedFile.write(">%s[%s-%s,%s,%s,%s,%s]\n%s\n" % (srna, start, end, strand, srna_type, feature, overlap, srnaSeq))

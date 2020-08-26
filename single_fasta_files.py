@@ -8,6 +8,7 @@ from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 import random
 import pandas as pd
+import comparativeSRNA as srna
 
 help = '''
     {script_name} -c com_port [-o output_file] [--loglevel level]
@@ -85,14 +86,14 @@ def rungetopts():
         sys.exit(2)
     return(file, folder)
 
-def single_fasta(fastaFile, folder):
-    for seq in fastaFile:
-        id = seq.id
-        outname = id.split("[")
-        outname = outname[0]
-        my_seq = seq.seq
-        outFile = open("/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s/%s.fna" % (folder, outname), "w")
-        outFile.write(">%s\n%s\n" % (id, my_seq))
+# def single_fasta(fastaFile, folder):
+#     for seq in fastaFile:
+#         id = seq.id
+#         outname = id.split("[")
+#         outname = outname[0]
+#         my_seq = seq.seq
+#         outFile = open("/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s/%s.fna" % (folder, outname), "w")
+#         outFile.write(">%s\n%s\n" % (id, my_seq))
 
 
 
@@ -107,7 +108,7 @@ def main():
         print "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/%s not found" % filename
         sys.exit(2)
 
-    single_fasta(fastaFile, folder)
+    srna.single_fasta(fastaFile, folder)
 
 
 if __name__ == "__main__":
