@@ -1,12 +1,17 @@
 #!/usr/bin/python
 
-import comparativeSRNA as srna
+
+##import packages
+import sys
+from Bio import SeqIO
+from Bio.SeqUtils import GC
+import getopt
 
 
 help = '''
-    foobar.py v 0.1 (August 2020) is a script for {}.
+    sRNAGCPercentage.py v 0.1 (August 2020) is a script for {}.
     Usage:
-         foobar.py [options] <input> <output>
+         sRNAGCPercentage.py [options] <input> <output>
     
     Options:
         -h	Display this help
@@ -49,4 +54,24 @@ def rungetopts():
     return(input, output)
 
 
-srna.helloworld()
+def main():
+
+    inFile, outFile = rungetopts()
+    record = list(SeqIO.parse(inFile, "fasta"))
+    output = open(outFile, "a")
+    for my_seq in record:
+        id = my_seq.id
+        gc_value = GC(my_seq.seq)
+        output.write("%s\t%s\n" % (id, gc_value))
+
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
