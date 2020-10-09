@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import sys
 from Bio import SeqIO
+import getopt
 
 help = '''
     sequence_cleaner.py v 0.1 (September 2020) is a script for {}.
@@ -13,8 +14,8 @@ help = '''
     Input
         -i	<fastaFile> the input
         -o	<outFile> the output
-        -l  <min_length> the minimum sequence length
-        -u  <max_length> the maximum sequence length
+        -l  <min_length> the minimum sequence length (default = 50)
+        -u  <max_length> the maximum sequence length (default = 500)
 
     
 '''
@@ -24,13 +25,15 @@ def usage():
 
 def rungetopts():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "i:o:qh", ["fastaFile", "outFile", "quiet", "help"])
+        opts, args = getopt.getopt(sys.argv[1:], "i:o:l:u:qh", ["fastaFile", "outFile", "minlength", "maxlength", "quiet", "help"])
     except getopt.GetoptError as err:
         print(err)
         usage()
         sys.exit(2)
     fastaFile = ""
     outFile = ""
+    min_length = 50
+    max_length = 500
     for o, a in opts:
             if o in ("-h", "--help"):
                 usage()
@@ -54,23 +57,25 @@ def rungetopts():
     return(fastaFile, outFile, min_length, max_length)
 
 
-def sequence_cleaner(fastaFile, outFile, min_length=50, max_length=500, por_n=100):
+def sequence_cleaner(fastaFile, outFile, min_length=50, max_length=500):
+    # print("running sequence cleaner using: min_length = %s, max_length = %s" % (min_length, max_length))
+    outFile = open(outFile, 'a')
     for seq_record in SeqIO.parse(fastaFile, "fasta"):
-        iter += 1
+      #  print(seq_record.id)
         sequence = str(seq_record.seq).upper()
-        if (
-                len(sequence) >= min_length
-                and (float(sequence.count("N")) / float(len(sequence))) * 100 <= por_n
-                and len(sequence) <= max_length
-        ):
+        # print("%s %s" % (len(sequence), min_length))
+        if len(sequence) > int(min_length) and len(sequence) <= int(max_length):
             seq_name = seq_record.id
-            sequence = seq_record.seq
-            outFile.write(f">{seq_name}\n{sequence}\n")
-
-
+            nucleotides = seq_record.seq
+            print("writing %s" % seq_name)
+            outFile.write(">%s\n%s\n" %(seq_name, nucleotides))
+        else:
+            seq_name = seq_record.id
+            nucleotides = seq_record.seq
+            print("%s failed filter.\n %s\n" %(seq_name, nucleotides))
 def main():
-
-    inFile, outFile, min_length, max_length = rungetopts()
+    # print("running getopts")
+    fastaFile, outFile, min_length, max_length = rungetopts()
     sequence_cleaner(fastaFile=fastaFile, outFile=outFile, min_length=min_length, max_length=max_length)
 
 
