@@ -8,7 +8,7 @@ from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 import random
 import pandas as pd
-import comparativeSRNA as srna
+import comparativesrna as srna
 
 help = '''
     {script_name} -c com_port [-o output_file] [--loglevel level]

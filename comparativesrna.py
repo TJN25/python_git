@@ -1,11 +1,11 @@
-from Bio.Alphabet import generic_dna
+import os
+import sys
 import random
-from Bio import SeqIO
+
+import pandas as pd
 from BCBio import GFF
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
-import random
-import pandas as pd
 
 
 def file_len(fname):
@@ -13,6 +13,7 @@ def file_len(fname):
         for i, l in enumerate(f):
             pass
     return i
+
 
 def intergenicSequence(accession, my_seq, shuffled):
     start = 0
@@ -34,14 +35,14 @@ def intergenicSequence(accession, my_seq, shuffled):
                     else:
                         random_seq = random_seq + intergeneicSeq
                     start = location.end
-                    #print len(random_seq)
+                    #print(len(random_seq))
                 except KeyError:
                     pass
 
         in_handle.close()
 
     except IOError:
-        print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession
+        print("/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession)
         sys.exit(2)
     return random_seq
 
@@ -76,11 +77,9 @@ def intergenicPositions(accession):
         in_handle.close()
 
     except IOError:
-        print "/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession
+        print("/Users/thomasnicholson/phd/RNASeq/sequences/%s.gff not found" % accession)
         sys.exit(2)
     return positions
-
-
 
 
 def makeoutputdirectory(write_path):
@@ -88,19 +87,18 @@ def makeoutputdirectory(write_path):
         try:
             os.mkdir(write_path)
         except OSError:
-            print ("Creation of the directory %s failed" % accession)
+            print("Creation of the directory %s failed" % write_path)
             sys.exit(2)
     directory = os.listdir(write_path)
     if len(directory) != 0:
-        print "Examples of files in %s" % write_path
-        print directory[0:4]
-        query_user = raw_input("%s is not an empty directory. Continue anyway y/n (this may write over existing files): " % write_path)
+        print("Examples of files in %s" % write_path)
+        print(directory[0:4])
+        query_user = input("%s is not an empty directory. Continue anyway y/n (this may write over existing files): " % write_path)
         if query_user == "y":
-            print "Using %s as directory" % write_path
+            print("Using %s as directory" % write_path)
         else:
-            print "Exiting script"
+            print("Exiting script")
             sys.exit(2)
-
 
 
 def concatenateSequence(fastaFile):
@@ -113,6 +111,7 @@ def concatenateSequence(fastaFile):
         i += 1
         my_seq = my_seq + seq.seq
     return my_seq
+
 
 def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
 
@@ -187,7 +186,6 @@ def selectRandomLocation(inFile, positions,fileLength, random_seq, accession):
         srnaFile.write(">%s[%s-%s,%s,%s]\n%s\n" % (srna, seqStart, seqEnd, strand, srna_type, sequence))
 
 
-
 def getreaddepths(accession):
     try:
         df = None
@@ -214,7 +212,8 @@ def getreaddepths(accession):
         return dfOut
 
     except IOError:
-        print "Cannot open a file in /Users/thomasnicholson/phd/RNASeq/plot_files/%s/" % accession
+        print("Cannot open a file in /Users/thomasnicholson/phd/RNASeq/plot_files/%s/" % accession)
+
 
 def sRNA_read_depths(inFile, read_depths_df,accession, random):
     if random == False:
@@ -304,7 +303,6 @@ def single_fasta(fastaFile, folder):
         outFile.write(">%s\n%s\n" % (id, my_seq))
 
 
-
 def openNHMMER(nhmmername):
     nhmmerDF = pd.read_csv(nhmmername, delim_whitespace=True, header=None, comment='#')
     nhmmerDF.columns = ["target_name", "accession", "query_name", "accession_2", "hmmfrom", "hmmto", "alifrom", "alito", "envfrom", "envto", "sq_len", "strand", "E_value", "score", "bias", "description_of_target"]
@@ -312,6 +310,7 @@ def openNHMMER(nhmmername):
     nhmmerDF[["ID_2", "descriptors_2"]] = nhmmerDF.query_name.str.split("[", expand = True)
     d = nhmmerDF.groupby('ID')['ID_2'].apply(list).to_dict()
     return(d)
+
 
 def openReadDepths(readdepthsname, d):
     readdepthsDF = pd.read_csv(readdepthsname, sep = "\t", comment='#')
@@ -380,11 +379,6 @@ def writeReadDepths(outname, readDepths, d):
         key, mean_mean, mean_median, mean_max, median_mean, median_median, median_max, max_mean, max_median, max_max,
         values))
     outFile.close()
-
-def helloworld():
-    print("hello world")
-
-
 
 
 def writeSequences(inFile,my_seq,accession,write_path):

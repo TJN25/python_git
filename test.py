@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import comparativeSRNA as srna
+import comparativesrna as srna
 
 
 help = '''
