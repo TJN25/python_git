@@ -7,6 +7,8 @@ from BCBio import GFF
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 
+def package_test():
+	print("comparativesrna.py loaded")
 
 def file_len(fname):
     with open(fname) as f:
@@ -414,3 +416,139 @@ def writeSequences(inFile,my_seq,accession,write_path):
             else:
                 srnaPredictedFile = open("%s/predicted/%s.fna" % (write_path, accession), "a")
                 srnaPredictedFile.write(">%s[%s-%s,%s,%s,%s,%s]\n%s\n" % (srna, start, end, strand, srna_type, feature, overlap, srnaSeq))
+                
+def get_overlap_vals(subsetDat, overlaps):
+    dat_len = len(subsetDat.index)
+    overlapping_ids = []
+    lengths = []
+    start_val = 0
+    end_val = 0
+    for i in range(0,dat_len):
+        query_val = subsetDat.iloc[i]['query_id']    
+        new_start_val = min([subsetDat.iloc[i]['target_start'], subsetDat.iloc[i]['target_end']])
+        new_end_val = max([subsetDat.iloc[i]['target_start'], subsetDat.iloc[i]['target_end']]) 
+        if end_val > new_start_val:
+            overlapping_ids.append(query_val)
+            len_1 = end_val - start_val
+            len_2 = new_end_val - new_start_val
+            shortest_seq = min([len_1, len_2])
+            overlap_start = max([start_val, new_start_val])
+            overlap_end = min([end_val, new_end_val])
+            overlap = (overlap_end - overlap_start)/shortest_seq
+            overlaps.append(overlap)
+        else:
+            end_val = new_end_val
+            start_val = new_start_val
+            overlapping_ids = [query_val]
+    return(overlaps)
+
+def get_overlap_list(subsetDat):
+    overlapping_ids = []
+    overlap_list = []
+    lengths = []
+    start_val = 0
+    end_val = 0
+    shortest_seq = max(subsetDat['target_end'])
+    dat_len = len(subsetDat.index)
+    for i in range(0,dat_len):
+        query_val = subsetDat.iloc[i]['query_id']    
+        new_start_val = min([subsetDat.iloc[i]['target_start'], subsetDat.iloc[i]['target_end']])
+        new_end_val = max([subsetDat.iloc[i]['target_start'], subsetDat.iloc[i]['target_end']])  
+        if end_val > new_start_val:
+            len_2 = new_end_val - new_start_val
+            shortest_seq = min([shortest_seq, len_2])
+            overlap_start = max([start_val, new_start_val])
+            overlap_end = min([end_val, new_end_val])
+            overlap = (overlap_end - overlap_start)/shortest_seq
+            
+            if overlap >= 0.5 and overlap_end - overlap_start >= 50:
+                if query_val not in overlapping_ids:
+                    overlapping_ids.append(query_val)
+                end_val = max([end_val, new_end_val])
+            else:
+                overlap_list.append(overlapping_ids)
+                shortest_seq = max(subsetDat['target_end'])
+                end_val = new_end_val
+                start_val = new_start_val
+                overlapping_ids = [query_val]
+        else:
+            overlap_list.append(overlapping_ids)
+            end_val = new_end_val
+            start_val = new_start_val
+            overlapping_ids = [query_val]
+        if i == dat_len - 1:
+            overlap_list.append(overlapping_ids)
+    return(overlap_list)
+
+def get_overlap_count(overlap_list, d):
+    for l in overlap_list:
+        list_len = len(l)
+        if list_len == 0:
+            continue
+        for i in range(0,list_len - 1):
+            for j in range(i+1, list_len):
+                ids =[l[i], l[j]]
+                ids.sort()
+                current_id = "_".join(ids)
+                if current_id in d:
+                    d[current_id] += 1
+                else:
+                    d[current_id] = 1
+    return(d)
+
+def unique_set_of_overlaps(all_overlaps, ids_checked, id1, id2):
+    make_new = True
+    counter = 0
+    if id1 in ids_checked:
+        if id1 in all_overlaps:
+            if id2 not in all_overlaps[id1]:
+                all_overlaps[id1].append(id2)    
+        else:
+            counter = 0
+            item_list = []
+            for item in all_overlaps:
+                if id1 in all_overlaps[item]:
+                    item_list.append(item)
+                    if id2 not in all_overlaps[item]:
+                        all_overlaps[item].append(id2)
+                    make_new = False
+                    counter += 1
+            if counter > 1:
+                print(item_list[1:])
+                for item in item_list[1:]:
+                    for value in all_overlaps[item]:
+                        if value not in all_overlaps[item_list[0]]:
+                            all_overlaps[item_list[0]].append(value)
+                    all_overlaps.pop(item, None)
+                     
+    else:
+        ids_checked.append(id1)
+    return(all_overlaps, ids_checked, make_new, counter)                
+                
+def combined_alignments(query, combined_d, ids_checked, query_matches):
+    combined_ids = [query]
+    ids_checked.append(query)
+    max_query = query
+    for i in range(0, len(query_ids)):
+        ids =[query, query_ids[i]]
+        ids.sort()
+        current_id = "_".join(ids)
+        if current_id in query_matches:
+            if query_ids[i] in ids_checked:
+                for key, value in combined_d.items():
+                    if query_ids[i] in value:
+                        max_query = key
+            else:
+                combined_ids.append(query_ids[i])
+                ids_checked.append(query_ids[i])
+                
+                
+    if max_query in combined_d:
+        for item in combined_ids:
+            if item not in combined_d[max_query]:
+                combined_d[max_query].append(item)
+    else:
+        combined_d[max_query] = combined_ids
+    return(combined_d, ids_checked)
+
+
