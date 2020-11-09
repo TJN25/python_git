@@ -552,3 +552,5 @@ def combined_alignments(query, combined_d, ids_checked, query_matches):
     return(combined_d, ids_checked)
 
 
+
+
