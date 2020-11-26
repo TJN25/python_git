@@ -13,7 +13,7 @@ from BCBio import GFF
 from Bio.Seq import Seq
 from Bio.Alphabet import generic_dna
 import random
-import comparativeSRNA as srna
+import comparativesrna as srna
 
 
 help = '''

@@ -3,7 +3,7 @@ import sys
 import getopt
 
 import pandas as pd
-import comparativeSRNA as srna
+import comparativesrna as srna
 
 help = '''
     {script_name} -c com_port [-o output_file] [--loglevel level]
