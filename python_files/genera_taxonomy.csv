@@ -1,0 +1,55 @@
+,0,Kingdom,Phylum,Class,Order,Family,Genus
+0,Salmonella,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Enterobacteriaceae,Salmonella_bongori
+1,Shigella,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Enterobacteriaceae,Shigella_boydii
+2,Escherichia,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Enterobacteriaceae,Type_species
+3,Enterobacter,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Enterobacteriaceae,Enterobacter_cancerogenus
+4,Plautia,Animal,Arthropod,Insect,Hemiptera,Pentatomidae,Pentatominae
+5,Klebsiella,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Enterobacteriaceae,a><br 
+6,Kosakonia,1,1,1,1,1,Kosakonia
+7,Citrobacter,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Enterobacteriaceae,Citrobacter_amalonaticus
+8,Candidatus,1,1,1,1,1,Candidatus
+9,Photorhabdus,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Morganellaceae,Photorhabdus_luminescens
+10,Xenorhabdus,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Morganellaceae,Xenorhabdus_beddingii
+11,Proteus,1,1,1,1,1,Proteus
+12,Providencia,1,1,1,1,1,Providencia
+13,Wigglesworthia,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Erwiniaceae,Wigglesworthia
+14,Buchnera,1,1,1,1,1,Buchnera
+15,Erwinia,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Erwiniaceae,i> is a genus of <a href=
+16,Pantoea,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Erwiniaceae,Type_species
+17,Dickeya,Bacteria,Proteobacteria,Gamma_Proteobacteria,Enterobacterales,Pectobacteriaceae,i><sup class=
+18,Sodalis,Bacterium,Proteobacteria,Gamma_Proteobacteria,Enterobacterales,Pectobacteriaceae,Sodalis_glossinidius
+19,Lonsdalea,1,1,1,1,1,Lonsdalea
+20,Brenneria,Bacterium,Proteobacteria,Gamma_Proteobacteria,Enterobacterales,Pectobacteriaceae,i> is a genus of <a href=
+21,Serratia,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Yersiniaceae,Serratia_aquatilis
+22,Yersinia,Bacteria,Proteobacteria,Gammaproteobacteria,Enterobacterales,Yersiniaceae,Yersinia_aldovae
+23,Edwardsiella,1,1,1,1,1,Edwardsiella
+24,Aggregatibacter,Bacteria,Proteobacteria,Gammaproteobacteria,Pasteurellales,Pasteurellaceae,Type_species
+25,Actinobacillus,Bacterium,Proteobacteria,Gammaproteobacteria,Pasteurellaceae,Pasteurellaceae,Actinobacillus_actinomycetemcomitans
+26,Glaesserella,1,1,1,1,1,Glaesserella
+27,Pasteurella,Bacterium,Proteobacteria,Gammaproteobacteria,Pasteurellales,Pasteurellaceae,Pasteurella_anatis
+28,Mannheimia,Bacterium,Proteobacteria,Gamma_Proteobacteria,Pasteurellales,Pasteurellaceae,Type_species
+29,Xanthomonas,Bacteria,Proteobacteria,Gammaproteobacteria,Xanthomonadales,Xanthomonadaceae,Xanthomonas_albilineans
+30,Stenotrophomonas,Bacterium,Proteobacteria,Gammaproteobacteria,Xanthomonadales,Xanthomonadaceae,Stenotrophomonas_acidaminiphila
+31,Xylella,Bacteria,Eubacteria,Proteobacteria,Gammaproteobacteria,Xanthomonadales,Xanthomonadaceae
+32,Pseudoxanthomonas,Bacterium,Proteobacteria,Gamma_Proteobacteria,Xanthomonadales,Xanthomonadaceae,Pseudoxanthomonas_broegbernensis
+33,Lysobacter,Bacteria,Proteobacteria,Gammaproteobacteria,Xanthomonadales,Xanthomonadaceae,i> belongs to the family <a href=
+34,Methylomicrobium,1,1,1,1,1,Methylomicrobium
+35,Methylococcus,1,1,1,1,1,Methylococcus
+36,Methylomonas,Bacterium,Proteobacteria,Gammaproteobacteria,Methylococcales,Methylococcaceae,Type_species
+37,Cycloclasticus,Bacteria,Proteobacteria,Gammaproteobacteria,Thiotrichales,Piscirickettsiaceae,Type_species
+38,Methylophaga,Bacteria,Proteobacteria,Gammaproteobacteria,Thiotrichales,Piscirickettsiaceae,Type_species
+39,Francisella,Bacterium,Proteobacteria,Gammaproteobacteria,Thiotrichales,Francisella_tularensis,Francisella_novicida
+40,Moraxella,Bacteria,Proteobacteria,Gammaproteobacteria,Pseudomonadales,Moraxellaceae,Type_species
+41,Psychrobacter,Bacteria,Proteobacteria,Gammaproteobacteria,Pseudomonadales,Moraxellaceae,Type_species
+42,Acinetobacter,Bacteria,Proteobacteria,Gammaproteobacteria,Pseudomonadales,Moraxellaceae,Acinetobacter_albensis
+43,Pseudomonas,Bacteria,Proteobacteria,Gammaproteobacteria,Pseudomonadales,Pseudomonadaceae,a><br 
+44,Azotobacter,Bacteria,Proteobacteria,Gammaproteobacteria,Pseudomonadales,Pseudomonadaceae,Azotobacter_chroococcum
+45,Vibrio,Bacteria,Proteobacteria,Gammaproteobacteria,Vibrionaceae,Vibrionaceae,Type_species
+46,Salinivibrio,1,1,1,1,1,Salinivibrio
+47,Marinobacter,Bacterium,Proteobacteria,Alteromonadales,Alteromonadaceae,Type_species,Marinobacter_adhaerens
+48,Alteromonas,Bacteria,Proteobacteria,Gammaproteobacteria,Alteromonadales,Alteromonadaceae,Type_species
+49,Agarivorans,Bacteria,Proteobacteria,Gammaproteobacteria,Alteromonadales,Alteromonadaceae,Type_species
+50,Alishewanella,Bacteria,Proteobacteria,Gammaproteobacteria,Alteromonadales,Alteromonadaceae,Type_species
+51,Moritella,1,1,1,1,1,Moritella
+52,Pseudoalteromonas,Bacterium,Proteobacteria,Gammaproteobacteria,Alteromonadales,Pseudoalteromonadaceae,i> is a genus of <a href=
+53,Shewanella,Bacteria,Proteobacteria,Alteromonadales,Type_species,Shewanella_abyssi,i> is the sole genus included in the <a href=
