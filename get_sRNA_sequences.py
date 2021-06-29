@@ -4,7 +4,7 @@ from Bio import SeqIO
 from Bio.Alphabet import generic_dna
 import getopt
 import os
-
+import comparativesrna as srna
 
 
 help = '''
@@ -128,7 +128,7 @@ def main():
         sys.exit(2)
 
 
-    write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1"
+    write_path = "/Users/thomasnicholson/phd/RNASeq/srna_seqs/version_1/seqs_predicted/"
 
     print "Combining contigs"
     my_seq = srna.concatenateSequence(fastaFile)
